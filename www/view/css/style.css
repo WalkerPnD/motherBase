@@ -1,0 +1,39 @@
+table{
+  table-layout: fixed;
+}
+.window-content{
+  position: relative;
+}
+.tableContainer{
+  /*display: block;*/
+
+  overflow: scroll;
+  
+}
+.table_title th {
+  color: transparent;
+}
+.table_title th div{
+  position: absolute;
+  top: 0;
+  padding:2px 15px;
+  width: 100%;
+  margin-left: -15px;
+  color: #333;
+  background-color: #f5f5f4;
+  display: table-cell;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+.tName{
+  width: 80px;
+  overflow: hidden;
+}
+.tLink{
+  width: 57px;
+}
+.tLink a {
+  cursor: pointer;
+}
+

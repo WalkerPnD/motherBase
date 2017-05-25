@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Settings</title>
+  <style>
+    ul{
+      list-style: none;
+    }
+  </style>
+</head>
+<body>
+  <p id="quote">BG color</p>
+  <ul>
+    <li>
+      <label>
+        <input type="radio" name="colors" value="skyblue">Skyblue
+      </label>
+    <li>
+      <label>
+        <input type="radio" name="colors" value="tomato">Tomato
+      </label>
+    <li>
+      <label>
+        <input type="radio" name="colors" value="slategray">Slate Gray
+      </label>
+  </ul>
+  <script>
+    const
+      electron = require('electron'),
+      ipcRenderer = electron.ipcRenderer;
+
+    let $colors = document.getElementsByName('colors');
+    Array.from($colors)
+      .forEach(_addEvent('click', changeColor));
+
+    function _addEvent(type, func){
+      return function(element){
+        element.addEventListener(type, func);
+      }
+    }
+    function changeColor(){
+      let color = this.value;
+      console.log(color + 'has sent');
+      ipcRenderer.send('settings_changed', color);
+    }
+  </script>
+</body>
+</html>

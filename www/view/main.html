@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>csvManipulator</title>
+  <link rel="stylesheet" href="css/photon.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="window" id="personList">
+    <header class="toolbar toolbar-header">
+    <div class="toolbar-actions">
+        <div class="btn-group">
+          <button class="btn btn-default" onclick="loadList(0)">
+            <span class="icon icon-arrows-ccw icon-text"></span>
+            Recarregar
+          </button>
+          <button class="btn btn-default" onclick="loadFiles()">
+            <span class="icon icon-login icon-text"></span>
+            Importar
+          </button>
+        </div>
+
+        <!--<button class="btn btn-default">
+          <span class="icon icon-home icon-text"></span>
+          Filters
+        </button>-->
+
+        <!--<button class="btn btn-default btn-dropdown pull-right">
+          <span class="icon icon-megaphone"></span>
+        </button>-->
+      </div>
+    </header>
+    <div class="window-content">
+
+    <!--<div class="header">
+      <p>CSV Manipulator</p>
+      total:  pessoas
+      <button onclick="dump()">Exportar</button>
+      <button onclick="loadList(0)">Recarregar</button>
+      <button onclick="loadFiles()">Atualizar Dados</button>
+    </div>-->
+    <!--<div class="container">-->
+      <!--<div class="listTitle">
+        filter:
+        Name <input type="text" v-model="qName" placeholder="filtrar"> /
+        Cargo <input type="text" v-model="qRole" placeholder="filtrar"> /
+        Empresa <input type="text" v-model="qCompany" placeholder="filtrar"> /
+        Local <input type="text" v-model="qLocation"
+          placeholder="filtrar">
+      </div>-->
+      <div class="tableContainer">
+        <table class="table-striped height-vh">
+          <thead>
+            <tr class="table_title">
+              <th class="tLink">Linkedin
+                <div>Linkedin</div>
+              </th>
+              <th>Company Name
+                <div>Company Name</div>
+              </th>
+              <th>First Name
+                <div>First Name</div>
+              </th>
+              <th>Last Name
+                <div>Last Name</div>
+              </th>
+              <th>Job Title
+                <div>Job Title</div>
+              </th>
+              <th>Industry
+                <div>Industry</div>
+              </th>
+              <th>City
+                <div>City</div>
+              </th>
+              <th>Email
+                <div>Email</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="p in personFilter">
+              <td class="tLink"><a href @click="openInBrowser(p.url)">Ln</a></td>
+              <td class="tName">{{p.company}}</td>
+              <td class="tName">{{p.firstName}}</td>
+              <td class="tName">{{p.lastName}}</td>
+              <td>{{p.jobTitle}}</td>
+              <td>{{p.industry}}</td>
+              <td>{{p.city}}</td>
+              <td>{{p.email}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <!--</div>-->
+    <!--<footer>
+      <button @click="prev()" v-bind:disabled="!hasPrev">Pref</button>
+      <button @click="next()" v-bind:disabled="!hasNext">Next</button>
+    </footer>-->
+
+    </div>
+    <footer class="toolbar toolbar-footer">
+      <div class="toolbar-actions">
+        <span> {{records}} Cadastrados </span>
+        <button class="btn btn-primary pull-right" onclick="dump()">Exportar</button>
+      </div>
+    </footer>
+  </div>
+  <script src="../lib/vue.js"></script>
+  <script>
+    const
+      electron = require('electron'),
+      openEx = electron.shell.openExternal,
+      ipcRenderer = electron.ipcRenderer;
+
+    let
+      current = 0,
+      personList = new Vue({
+        el: '#personList',
+        data: {
+          records:0,
+          count: 0,
+          qName: '',
+          qRole: '',
+          qCompany: '',
+          qLocation: '',
+          persons: [],
+          hasNext: false,
+          hasPrev: false
+        },
+        methods: {
+          openInBrowser: function (url) {
+            openEx(url);
+          },
+          next: function() {
+            if(this.hasNext)
+              loadList(++current);
+          },
+          prev: function(){
+            if(this.hasPrev)
+              loadList(--current);
+          }
+        },
+        computed: {
+          personFilter: function () {
+            let self = this;
+            return self.persons.filter(function (p) {
+              return (
+                RegExp(self.qName, 'i').test(p.name)
+                && RegExp(self.qRole, 'i').test(p.role)
+                && RegExp(self.qCompany, 'i').test(p.company)
+                && RegExp(self.qLocation, 'i').test(p.local)
+              );
+            })
+          }
+        }
+      })
+    path = ''; // not using
+
+    loadList(0);
+
+    ipcRenderer.on('set_bgcolor', function (event, color) {
+      document.body.style.backgroundColor = color;
+    });
+    ipcRenderer.on('set_personList', function (event, list) {
+      personList.persons = list.persons;
+      personList.hasNext = list.hasNext;
+      personList.hasPrev = list.hasPrev;
+      personList.count   = list.persons.length;
+      personList.records = list.records;
+    });
+
+    function loadList(offset) {
+      ipcRenderer.send('get_personList', offset);
+    }
+
+    function loadFiles() {
+      console.log('hello');
+      ipcRenderer.send('readCsvFiles', path);
+      offset = 0;
+    }
+
+    function openInBrowser(s) {
+      console.log(s);
+    }
+
+    function dump(){
+      ipcRenderer.send('dump');
+    }
+
+  </script>
+</body>
+
+</html>
