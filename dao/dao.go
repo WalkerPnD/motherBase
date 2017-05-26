@@ -22,7 +22,6 @@ func newConnection() *gorm.DB {
 	conn.AutoMigrate(&model.Lead{})
 	conn.AutoMigrate(&model.Irregular{})
 	conn.AutoMigrate(&model.Sheet{})
-	go initLeadsCreatePool(conn)
 
 	return conn
 }
@@ -30,22 +29,26 @@ func newConnection() *gorm.DB {
 func LeadsBuldCreate(bs []byte) {
 	irregulars := []*model.Irregular{}
 	gocsv.UnmarshalString(model.CleanCsv(bs), &irregulars)
-	for _, irr := range irregulars {
-		irrArr <- irr
-	}
-}
 
-func initLeadsCreatePool(conn *gorm.DB) {
-	for {
-		irregular, _ := <-irrArr
+	tx := Conn.Begin()
+	for _, irregular := range irregulars {
 		if irregular.LinkedIn != "" {
-			lead := model.IrregularToLead(irregular)
-			err := conn.Create(lead)
-			if err != nil {
-				fmt.Println(err)
+			lead := model.IrregularToLead(irregular, Conn)
+			sheet := lead.Sheets[0]
+			tx.FirstOrCreate(&sheet, model.Sheet{Name: lead.Sheets[0].Name})
+			lead.Sheets[0] = sheet
+			res := tx.FirstOrCreate(&lead, model.Lead{LinkedIn: lead.LinkedIn})
+			if res.RowsAffected == int64(0) {
+				lead.Sheets = append(lead.Sheets, sheet)
+				tx.Save(lead)
 			}
+			//err := tx.Create(lead)
+			// if err != nil {
+			// 	fmt.Println(err)
+			// }
 			continue
 		}
-		conn.Create(irregular)
+		tx.Create(irregular)
 	}
+	tx.Commit()
 }

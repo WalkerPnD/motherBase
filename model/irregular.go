@@ -1,5 +1,11 @@
 package model
 
+import (
+	"strings"
+
+	"github.com/jinzhu/gorm"
+)
+
 // Irregular people with no linkedin links
 type Irregular struct {
 	CompanyName string `csv:"Company Name" gorm:"type:varchar(63)"`
@@ -14,7 +20,12 @@ type Irregular struct {
 }
 
 // IrregularToLead change Lead to Irregular
-func IrregularToLead(irr *Irregular) *Lead {
+func IrregularToLead(irr *Irregular, c *gorm.DB) *Lead {
+	if irr.Sheets == "" {
+		irr.Sheets = "-"
+	}
+	irr.Sheets = strings.TrimSpace(irr.Sheets)
+	irr.Sheets = strings.Title(irr.Sheets)
 	return &Lead{
 		CompanyName: irr.CompanyName,
 		Industry:    irr.Industry,

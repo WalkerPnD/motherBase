@@ -45,7 +45,7 @@ func filesToLeads(files []*multipart.FileHeader) {
 			fmt.Println(err)
 		}
 
-		go dao.LeadsBuldCreate(bs)
+		dao.LeadsBuldCreate(bs)
 	}
 
 	return

@@ -1,9 +1,6 @@
 package model
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 // CleanCsv cleans the file
 func CleanCsv(bs []byte) string {
@@ -20,6 +17,5 @@ func CleanCsvHeader(str string) string {
 		headers[k] = strings.Title(headers[k])
 	}
 	str = strings.Join(headers, ",")
-	fmt.Println(headers)
 	return str
 }
