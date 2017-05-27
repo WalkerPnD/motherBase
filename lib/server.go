@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo"
-	rClient "mjv.projects/motherBase/route/client"
+	"mjv.projects/motherBase/route/apiLead"
 )
 
 // Server controles the Running state
@@ -32,8 +32,9 @@ func (s *Server) Run() {
 		s.Running = true
 		// s.Use(middleware.Logger())
 		s.Static("/", s.Root)
-		s.POST("/api/client/uploadCsv", rClient.UploadCsv)
-		s.GET("/api/client/apiTest", rClient.APITest)
+		s.POST("/api/lead/cleanCSV", apiLead.CleanCSV)
+		s.POST("/api/lead/bulkCreate", apiLead.BulkCreate)
+		s.GET("/api/client/apiTest", apiLead.APITest)
 
 		go func() {
 			s.Logger.Debug(s.Start(":" + s.Port))

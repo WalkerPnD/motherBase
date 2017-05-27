@@ -2,7 +2,6 @@ package model
 
 // Lead is a potential sales contact
 type Lead struct {
-	//gorm.Model
 	CompanyName string  `csv:"Company Name" gorm:"type:varchar(63)"`
 	FullName    string  `csv:"Full Name" gorm:"type:varchar(127)"`
 	JobTitle    string  `csv:"Job Title" gorm:"type:varchar(63)"`
