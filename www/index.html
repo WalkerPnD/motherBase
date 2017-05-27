@@ -6,8 +6,16 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<a href="/api/client/apiTest">APITest</a>
-<form action="/api/client/uploadCsv" method="POST" enctype="multipart/form-data">
+<div>
+<h1>Limpar a planilha filho</h1>
+<form action="/api/lead/cleanCSV" method="POST" enctype="multipart/form-data">
+  <input type="file" name="files" multiple><br>
+  <input type="submit" value="enviar">
+</form>
+</div>
+<hr>
+<h2>Adicionar o Banco</h2>
+<form action="/api/lead/bulkCreate" method="POST" enctype="multipart/form-data">
   <input type="file" name="files" multiple><br>
   <input type="submit" value="enviar">
 </form>

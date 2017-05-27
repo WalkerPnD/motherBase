@@ -1,10 +1,6 @@
 package model
 
-import (
-	"strings"
-
-	"github.com/jinzhu/gorm"
-)
+import "strings"
 
 // Irregular people with no linkedin links
 type Irregular struct {
@@ -41,13 +37,13 @@ func (irr *Irregular) CleanDatas() {
 		irr.FullName = irr.FirstName + " " + irr.LastName
 	}
 	if irr.HardBounce == "" {
-		irr.HardBounce = "0"
+		irr.HardBounce = "não"
 	}
 	irr.Sheets = strings.Title(irr.Sheets)
 }
 
 // ToLead change Lead to Irregular
-func (irr *Irregular) ToLead(c *gorm.DB) *Lead {
+func (irr *Irregular) ToLead() *Lead {
 	return &Lead{
 		CompanyName: irr.CompanyName,
 		Industry:    irr.Industry,

@@ -12,11 +12,13 @@ import (
 func BulkCreate(c echo.Context) error {
 	form, err := c.MultipartForm()
 	if err != nil {
-		fmt.Println(err.Error())
-		return err
+		return c.HTML(http.StatusOK, err.Error())
 	}
 
 	files := form.File["files"]
+	if len(files) == 0 {
+		return c.HTML(http.StatusOK, "<p>Não há arquivos</p>")
+	}
 
 	go dao.CSVsToLeads(files)
 
@@ -30,6 +32,23 @@ func APITest(c echo.Context) error {
 
 // CleanCSV removes the existing leads which already in motherBase
 func CleanCSV(c echo.Context) error {
-	csvFile := ""
-	return c.File(csvFile)
+	form, err := c.MultipartForm()
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	files := form.File["files"]
+	if len(files) == 0 {
+		return c.HTML(http.StatusOK, "<p>Não há arquivos</p>")
+	}
+
+	csvFile, newContacts := dao.CleanLeadCSV(files)
+	if newContacts == 0 {
+		return c.HTML(http.StatusOK, "<p>Não há novos contatos</p>")
+	}
+
+	c.Response().Header().Set("Content-Type", "application/csv")
+	c.Response().Header().Set("Content-Disposition", "attachment; filename=planilhaFilho.csv")
+	return c.String(http.StatusOK, csvFile)
 }

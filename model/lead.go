@@ -10,5 +10,25 @@ type Lead struct {
 	Industry    string  `csv:"Industry" gorm:"type:varchar(63)"`
 	Email       string  `csv:"Email" gorm:"type:varchar(127)"`
 	Sheets      []Sheet `gorm:"many2many:lead_sheets;"`
-	HardBounce  bool    `csv:"hardbounce"`
+	HardBounce  bool    `csv:"Hardbounce"`
+}
+
+// ToChildLead change Lead to Irregular
+func (l *Lead) ToChildLead() *ChildLead {
+	hb := "não"
+	if l.HardBounce {
+		hb = "sim"
+	}
+
+	return &ChildLead{
+		CompanyName: l.CompanyName,
+		Industry:    l.Industry,
+		FullName:    l.FullName,
+		JobTitle:    l.JobTitle,
+		City:        l.City,
+		LinkedIn:    l.LinkedIn,
+		Email:       l.Email,
+		Sheets:      l.Sheets[0].Name,
+		HardBounce:  hb,
+	}
 }
