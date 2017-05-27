@@ -26,14 +26,16 @@ func newConnection() *gorm.DB {
 	return conn
 }
 
-func LeadsBuldCreate(bs []byte) {
+// BulkCreateLeads saves Irregulars and Leads
+func BulkCreateLeads(bs []byte) {
 	irregulars := []*model.Irregular{}
 	gocsv.UnmarshalString(model.CleanCsv(bs), &irregulars)
 
 	tx := Conn.Begin()
-	for _, irregular := range irregulars {
-		if irregular.LinkedIn != "" {
-			lead := model.IrregularToLead(irregular, Conn)
+	for _, irr := range irregulars {
+		irr.CleanDatas()
+		if irr.LinkedIn != "" {
+			lead := irr.ToLead(Conn)
 			sheet := lead.Sheets[0]
 			tx.FirstOrCreate(&sheet, model.Sheet{Name: lead.Sheets[0].Name})
 			lead.Sheets[0] = sheet
@@ -42,13 +44,9 @@ func LeadsBuldCreate(bs []byte) {
 				lead.Sheets = append(lead.Sheets, sheet)
 				tx.Save(lead)
 			}
-			//err := tx.Create(lead)
-			// if err != nil {
-			// 	fmt.Println(err)
-			// }
 			continue
 		}
-		tx.Create(irregular)
+		tx.Create(irr)
 	}
 	tx.Commit()
 }

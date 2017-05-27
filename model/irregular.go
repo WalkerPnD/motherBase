@@ -16,16 +16,38 @@ type Irregular struct {
 	Industry    string `csv:"Industry" gorm:"type:varchar(63)"`
 	Email       string `csv:"email" gorm:"type:varchar(127);primaty_key:true"`
 	Sheets      string `csv:"Nome Da Planilha" gorm:"type:varchar(63)"`
-	HardBounce  string `csv:"hardbounce"`
+	HardBounce  string `csv:"hardbounce" gorm:"type:varchar(8)"`
+	FirstName   string `csv:"First Name" sql:"-"`
+	LastName    string `csv:"Last Name" sql:"-"`
 }
 
-// IrregularToLead change Lead to Irregular
-func IrregularToLead(irr *Irregular, c *gorm.DB) *Lead {
+// CleanDatas removes spaces and does de conversion of datas
+func (irr *Irregular) CleanDatas() {
+	irr.CompanyName = strings.TrimSpace(irr.CompanyName)
+	irr.FullName = strings.TrimSpace(irr.FullName)
+	irr.FirstName = strings.TrimSpace(irr.FirstName)
+	irr.LastName = strings.TrimSpace(irr.LastName)
+	irr.City = strings.TrimSpace(irr.City)
+	irr.LinkedIn = strings.TrimSpace(irr.LinkedIn)
+	irr.Industry = strings.TrimSpace(irr.Industry)
+	irr.Email = strings.TrimSpace(irr.Email)
+	irr.Sheets = strings.TrimSpace(irr.Sheets)
+	irr.HardBounce = strings.TrimSpace(irr.HardBounce)
+
 	if irr.Sheets == "" {
 		irr.Sheets = "-"
 	}
-	irr.Sheets = strings.TrimSpace(irr.Sheets)
+	if irr.FullName == "" {
+		irr.FullName = irr.FirstName + " " + irr.LastName
+	}
+	if irr.HardBounce == "" {
+		irr.HardBounce = "0"
+	}
 	irr.Sheets = strings.Title(irr.Sheets)
+}
+
+// ToLead change Lead to Irregular
+func (irr *Irregular) ToLead(c *gorm.DB) *Lead {
 	return &Lead{
 		CompanyName: irr.CompanyName,
 		Industry:    irr.Industry,
@@ -35,6 +57,16 @@ func IrregularToLead(irr *Irregular, c *gorm.DB) *Lead {
 		LinkedIn:    irr.LinkedIn,
 		Email:       irr.Email,
 		Sheets:      []Sheet{Sheet{Name: irr.Sheets}},
-		HardBounce:  false,
+		HardBounce:  irr.HardBounceToBool(),
 	}
+}
+
+// HardBounceToBool returns true / false of from Irregular HardBouns string
+func (irr *Irregular) HardBounceToBool() bool {
+	val := strings.TrimSpace(irr.HardBounce)
+	val = string(strings.ToLower(val)[0])
+	if val == "s" || val == "y" || val == "1" {
+		return true
+	}
+	return false
 }

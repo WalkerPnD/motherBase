@@ -1,1 +1,3 @@
 motherBase*
+*.sqlite3
+*/*.csv
