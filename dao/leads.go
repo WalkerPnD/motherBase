@@ -18,15 +18,7 @@ func BulkCreateLeads(bs []byte) {
 	for _, irr := range irregulars {
 		irr.CleanDatas()
 		if irr.LinkedIn != "" {
-			lead := irr.ToLead()
-			sheet := lead.Sheets[0]
-			tx.FirstOrCreate(&sheet, model.Sheet{Name: lead.Sheets[0].Name})
-			lead.Sheets[0] = sheet
-			res := tx.FirstOrCreate(&lead, model.Lead{LinkedIn: lead.LinkedIn})
-			if res.RowsAffected == int64(0) {
-				lead.Sheets = append(lead.Sheets, sheet)
-				tx.Save(lead)
-			}
+			tx.Save(irr.ToLead())
 			continue
 		}
 		tx.Create(irr)

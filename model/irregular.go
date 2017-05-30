@@ -52,7 +52,7 @@ func (irr *Irregular) ToLead() *Lead {
 		City:        irr.City,
 		LinkedIn:    irr.LinkedIn,
 		Email:       irr.Email,
-		Sheets:      []Sheet{Sheet{Name: irr.Sheets}},
+		Sheets:      irr.Sheets,
 		HardBounce:  irr.HardBounceToBool(),
 	}
 }

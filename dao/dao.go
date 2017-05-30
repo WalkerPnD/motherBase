@@ -20,7 +20,6 @@ func newConnection() *gorm.DB {
 	}
 	conn.AutoMigrate(&model.Lead{})
 	conn.AutoMigrate(&model.Irregular{})
-	conn.AutoMigrate(&model.Sheet{})
 
 	return conn
 }
