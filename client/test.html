@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  test
+  ref: http://uhyohyo.net/javascript/13_1.html
+<script>
+(function(){
+let target = 'https://www.linkedin.com/sales/profile/363384478,dIsp,NAME_SEARCH?moduleKey=peopleSearchResults&pageKey=sales-search3-people-refinement&contextId=4BCA84B8E039C3148012182ABE2A0000&requestId=4d1e76ab-b790-4044-ab53-2044fd6e5ff7&action=CLICK&target=urn%3Ali%3AsalesLead%3A(-1%2C363384478)&pageNumber=3&targetEl=profilelink&position=1&trk=lss-serp-result-lead_name';
+let xhr = new XMLHttpRequest();
+xhr.open('GET', target);
+xhr.addEventListener("load", function(ev){
+  console.log(xhr.responseType)
+  console.log(xhr.getAllResponseHeaders);
+  console.log(xhr.response)
+})
+xhr.send();
+})();
+  </script>
+</body>
+</html>
