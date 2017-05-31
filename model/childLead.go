@@ -3,7 +3,8 @@ package model
 // ChildLead is a format to export to CSV
 type ChildLead struct {
 	CompanyName string `csv:"Company Name"`
-	FullName    string `csv:"Full Name"`
+	FirstName   string `csv:"First Name"`
+	LastName    string `csv:"Last Name"`
 	JobTitle    string `csv:"Job Title"`
 	City        string `csv:"City"`
 	LinkedIn    string `csv:"Linkedin"`
