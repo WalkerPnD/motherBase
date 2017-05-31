@@ -3,7 +3,8 @@ package model
 // Lead is a potential sales contact
 type Lead struct {
 	CompanyName string `csv:"Company Name" gorm:"type:varchar(63)"`
-	FullName    string `csv:"Full Name" gorm:"type:varchar(127)"`
+	FirstName   string `csv:"First Name" gorm:"type:varchar(127)"`
+	LastName    string `csv:"Last Name" gorm:"type:varchar(127)"`
 	JobTitle    string `csv:"Job Title" gorm:"type:varchar(63)"`
 	City        string `csv:"City" gorm:"type:varchar(127)"`
 	LinkedIn    string `csv:"Linkedin" gorm:"primary_key" gorm:"type:varchar(511)"`
@@ -23,7 +24,8 @@ func (l *Lead) ToChildLead() *ChildLead {
 	return &ChildLead{
 		CompanyName: l.CompanyName,
 		Industry:    l.Industry,
-		FullName:    l.FullName,
+		FirstName:   l.FirstName,
+		LastName:    l.LastName,
 		JobTitle:    l.JobTitle,
 		City:        l.City,
 		LinkedIn:    l.LinkedIn,

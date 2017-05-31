@@ -5,7 +5,8 @@ import "strings"
 // Irregular people with no linkedin links
 type Irregular struct {
 	CompanyName string `csv:"Company Name" gorm:"type:varchar(63)"`
-	FullName    string `csv:"Full Name" gorm:"type:varchar(127)"`
+	FirstName   string `csv:"First Name" gorm:"type:varchar(127)"`
+	LastName    string `csv:"Last Name" gorm:"type:varchar(127)"`
 	JobTitle    string `csv:"Job Title" gorm:"type:varchar(63)"`
 	City        string `csv:"City" gorm:"type:varchar(127)"`
 	LinkedIn    string `csv:"Linkedin" gorm:"-"`
@@ -13,16 +14,14 @@ type Irregular struct {
 	Email       string `csv:"email" gorm:"type:varchar(127);primaty_key:true"`
 	Sheets      string `csv:"Nome Da Planilha" gorm:"type:varchar(63)"`
 	HardBounce  string `csv:"hardbounce" gorm:"type:varchar(8)"`
-	FirstName   string `csv:"First Name" sql:"-"`
-	LastName    string `csv:"Last Name" sql:"-"`
 }
 
 // CleanDatas removes spaces and does de conversion of datas
 func (irr *Irregular) CleanDatas() {
-	irr.CompanyName = strings.TrimSpace(irr.CompanyName)
-	irr.FullName = strings.TrimSpace(irr.FullName)
-	irr.FirstName = strings.TrimSpace(irr.FirstName)
-	irr.LastName = strings.TrimSpace(irr.LastName)
+	irr.CompanyName = cleanData(irr.CompanyName)
+	irr.FirstName = cleanData(irr.FirstName)
+	irr.LastName = cleanData(irr.LastName)
+	irr.JobTitle = cleanData(irr.JobTitle)
 	irr.City = strings.TrimSpace(irr.City)
 	irr.LinkedIn = strings.TrimSpace(irr.LinkedIn)
 	irr.Industry = strings.TrimSpace(irr.Industry)
@@ -33,9 +32,7 @@ func (irr *Irregular) CleanDatas() {
 	if irr.Sheets == "" {
 		irr.Sheets = "-"
 	}
-	if irr.FullName == "" {
-		irr.FullName = irr.FirstName + " " + irr.LastName
-	}
+
 	if irr.HardBounce == "" {
 		irr.HardBounce = "não"
 	}
@@ -47,7 +44,8 @@ func (irr *Irregular) ToLead() *Lead {
 	return &Lead{
 		CompanyName: irr.CompanyName,
 		Industry:    irr.Industry,
-		FullName:    irr.FullName,
+		FirstName:   irr.FirstName,
+		LastName:    irr.LastName,
 		JobTitle:    irr.JobTitle,
 		City:        irr.City,
 		LinkedIn:    irr.LinkedIn,

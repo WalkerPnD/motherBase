@@ -11,17 +11,24 @@ import (
 
 // BulkCreateLeads saves Irregulars and Leads
 func BulkCreateLeads(bs []byte) {
+	rows := 0
 	irregulars := []*model.Irregular{}
 	gocsv.UnmarshalString(model.CleanCsv(bs), &irregulars)
 
 	tx := Conn.Begin()
 	for _, irr := range irregulars {
 		irr.CleanDatas()
-		if irr.LinkedIn != "" {
+		n := &model.Lead{
+			CompanyName: irr.CompanyName,
+			FirstName:   irr.FirstName,
+			LastName:    irr.LastName,
+			JobTitle:    irr.JobTitle,
+		}
+		Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
+		if rows == 0 {
 			tx.Save(irr.ToLead())
 			continue
 		}
-		tx.Create(irr)
 	}
 	tx.Commit()
 }
@@ -81,7 +88,12 @@ func newChildLeads(bs []byte) []*model.ChildLead {
 		}
 
 		irrLead := irr.ToLead()
-		n := &model.Lead{LinkedIn: irrLead.LinkedIn}
+		n := &model.Lead{
+			CompanyName: irr.CompanyName,
+			FirstName:   irr.FirstName,
+			LastName:    irr.LastName,
+			JobTitle:    irr.JobTitle,
+		}
 		Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
 		if rows == 0 {
 			childs = append(childs, irrLead.ToChildLead())
