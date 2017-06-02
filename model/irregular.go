@@ -11,7 +11,7 @@ type Irregular struct {
 	City        string `csv:"City" gorm:"type:varchar(127)"`
 	LinkedIn    string `csv:"Linkedin" gorm:"-"`
 	Industry    string `csv:"Industry" gorm:"type:varchar(63)"`
-	Email       string `csv:"email" gorm:"type:varchar(127);primaty_key:true"`
+	Email       string `csv:"Email" gorm:"type:varchar(127);primaty_key:true"`
 	Sheets      string `csv:"Nome Da Planilha" gorm:"type:varchar(63)"`
 	HardBounce  string `csv:"hardbounce" gorm:"type:varchar(8)"`
 }

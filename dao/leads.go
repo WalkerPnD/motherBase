@@ -53,7 +53,7 @@ func CSVsToLeads(files []*multipart.FileHeader) {
 // CleanLeadCSV returns csvString without repetition
 func CleanLeadCSV(files []*multipart.FileHeader) (string, int) {
 
-	childs := []*model.ChildLead{}
+	childs := []*model.Irregular{}
 
 	for _, file := range files {
 		src, err := file.Open()
@@ -75,29 +75,44 @@ func CleanLeadCSV(files []*multipart.FileHeader) (string, int) {
 	return str, len(childs)
 }
 
-func newChildLeads(bs []byte) []*model.ChildLead {
-	childs := []*model.ChildLead{}
+func newChildLeads(bs []byte) []*model.Irregular {
+	childs := []*model.Irregular{}
 	irregulars := []*model.Irregular{}
 	gocsv.UnmarshalString(model.CleanCsv(bs), &irregulars)
+	fmt.Println(irregulars[0].Email)
 
 	for _, irr := range irregulars {
-		rows := 0
+
 		irr.CleanDatas()
 		if irr.LinkedIn == "" {
 			continue
 		}
 
-		irrLead := irr.ToLead()
-		n := &model.Lead{
-			CompanyName: irr.CompanyName,
-			FirstName:   irr.FirstName,
-			LastName:    irr.LastName,
-			JobTitle:    irr.JobTitle,
-		}
-		Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
-		if rows == 0 {
-			childs = append(childs, irrLead.ToChildLead())
+		if isNew(irr) {
+			childs = append(childs, irr)
 		}
 	}
 	return childs
+}
+
+func isNew(target *model.Irregular) bool {
+	rows := 0
+	n := &model.Lead{}
+	n.Email = target.Email
+	Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
+	if rows == 0 {
+		return true
+	}
+
+	n = &model.Lead{
+		CompanyName: target.CompanyName,
+		FirstName:   target.FirstName,
+		LastName:    target.LastName,
+		JobTitle:    target.JobTitle,
+	}
+	Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
+	if rows == 0 {
+		return true
+	}
+	return false
 }

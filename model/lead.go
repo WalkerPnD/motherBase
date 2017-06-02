@@ -13,24 +13,3 @@ type Lead struct {
 	Sheets      string `csv:"Nome Da Planilha" gorm:"type:varchar(63)"`
 	HardBounce  bool   `csv:"Hardbounce"`
 }
-
-// ToChildLead change Lead to Irregular
-func (l *Lead) ToChildLead() *ChildLead {
-	hb := "não"
-	if l.HardBounce {
-		hb = "sim"
-	}
-
-	return &ChildLead{
-		CompanyName: l.CompanyName,
-		Industry:    l.Industry,
-		FirstName:   l.FirstName,
-		LastName:    l.LastName,
-		JobTitle:    l.JobTitle,
-		City:        l.City,
-		LinkedIn:    l.LinkedIn,
-		Email:       l.Email,
-		Sheets:      l.Sheets,
-		HardBounce:  hb,
-	}
-}
