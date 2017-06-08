@@ -68,6 +68,8 @@ func CleanLeadCSV(files []*multipart.FileHeader) (string, int) {
 		}
 		childs = append(childs, newChildLeads(bs)...)
 	}
+
+	childs = removeDuplicated(childs)
 	str, err := gocsv.MarshalString(&childs)
 	if err != nil {
 		fmt.Println(err)
@@ -115,4 +117,31 @@ func isNew(target *model.Irregular) bool {
 		return true
 	}
 	return false
+}
+
+func removeDuplicated(datas []*model.Irregular) []*model.Irregular {
+	newDatas := []*model.Irregular{}
+
+	if len(datas) == 0 || len(datas) == 0 {
+		return newDatas
+	}
+
+	datas[0].CleanDatas()
+	newDatas = append(newDatas, datas[0])
+	for _, data := range datas {
+		exists := false
+		data.CleanDatas()
+		for _, nd := range newDatas {
+			if nd.Exists(data) {
+				exists = true
+				break
+			}
+		}
+		if exists {
+			continue
+		}
+		newDatas = append(newDatas, data)
+	}
+
+	return newDatas
 }

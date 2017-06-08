@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo"
 	"mjv.projects/motherBase/dao"
+	"mjv.projects/motherBase/model"
 )
 
 // BulkCreate recieves csv file and create Leads on DataBase
@@ -49,6 +50,30 @@ func CleanCSV(c echo.Context) error {
 	}
 
 	fileName := files[0].Filename + "-planilhaFilho.csv"
+	c.Response().Header().Set("Content-Type", "application/csv")
+	c.Response().Header().Set("Content-Disposition", "attachment; filename="+fileName)
+	return c.String(http.StatusOK, csvFile)
+}
+
+// JoinInDatas
+func JoinInDatas(c echo.Context) error {
+	form, err := c.MultipartForm()
+	if err != nil {
+		fmt.Println(err.Error())
+		return err
+	}
+
+	files := form.File["files"]
+	if len(files) == 0 {
+		return c.HTML(http.StatusOK, "<p>Não há arquivos</p>")
+	}
+
+	csvFile, newContacts := model.JoinContacts(files)
+	if newContacts == 0 {
+		return c.HTML(http.StatusOK, "<p>Não há novos contatos</p>")
+	}
+
+	fileName := files[0].Filename + "-clean.csv"
 	c.Response().Header().Set("Content-Type", "application/csv")
 	c.Response().Header().Set("Content-Disposition", "attachment; filename="+fileName)
 	return c.String(http.StatusOK, csvFile)

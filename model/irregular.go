@@ -39,6 +39,13 @@ func (irr *Irregular) CleanDatas() {
 	irr.Sheets = strings.Title(irr.Sheets)
 }
 
+func (l *Irregular) Exists(cmp *Irregular) bool {
+	if l.FirstName == cmp.FirstName && l.CompanyName == cmp.CompanyName && l.JobTitle == cmp.JobTitle {
+		return true
+	}
+	return false
+}
+
 // ToLead change Lead to Irregular
 func (irr *Irregular) ToLead() *Lead {
 	return &Lead{

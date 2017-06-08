@@ -34,6 +34,7 @@ func (s *Server) Run() {
 		s.Static("/", s.Root)
 		s.POST("/api/lead/cleanCSV", apiLead.CleanCSV)
 		s.POST("/api/lead/bulkCreate", apiLead.BulkCreate)
+		s.POST("/api/lead/JoinInDatas", apiLead.JoinInDatas)
 		s.GET("/api/client/apiTest", apiLead.APITest)
 
 		go func() {
