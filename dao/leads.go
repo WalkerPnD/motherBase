@@ -24,7 +24,7 @@ func BulkCreateLeads(bs []byte) {
 			LastName:    irr.LastName,
 			JobTitle:    irr.JobTitle,
 		}
-		Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
+		tx.Model(&model.Lead{}).Where(&n).Count(&rows)
 		if rows == 0 {
 			tx.Save(irr.ToLead())
 			continue
@@ -81,7 +81,6 @@ func newChildLeads(bs []byte) []*model.Irregular {
 	childs := []*model.Irregular{}
 	irregulars := []*model.Irregular{}
 	gocsv.UnmarshalString(model.CleanCsv(bs), &irregulars)
-	fmt.Println(irregulars[0].Email)
 
 	for _, irr := range irregulars {
 
@@ -102,8 +101,8 @@ func isNew(target *model.Irregular) bool {
 	n := &model.Lead{}
 	n.Email = target.Email
 	Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
-	if rows == 0 {
-		return true
+	if rows != 0 {
+		return false
 	}
 
 	n = &model.Lead{

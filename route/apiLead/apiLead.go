@@ -21,7 +21,7 @@ func BulkCreate(c echo.Context) error {
 		return c.HTML(http.StatusOK, "<p>Não há arquivos</p>")
 	}
 
-	go dao.CSVsToLeads(files)
+	dao.CSVsToLeads(files)
 
 	return c.HTML(http.StatusOK, "<p>done</p>")
 }
@@ -77,4 +77,9 @@ func JoinInDatas(c echo.Context) error {
 	c.Response().Header().Set("Content-Type", "application/csv")
 	c.Response().Header().Set("Content-Disposition", "attachment; filename="+fileName)
 	return c.String(http.StatusOK, csvFile)
+}
+
+func UpdateDB(c echo.Context) error {
+	dao.UpDateDB()
+	return c.HTML(http.StatusOK, "<p>Done</p>")
 }

@@ -36,6 +36,7 @@ func (s *Server) Run() {
 		s.POST("/api/lead/bulkCreate", apiLead.BulkCreate)
 		s.POST("/api/lead/JoinInDatas", apiLead.JoinInDatas)
 		s.GET("/api/client/apiTest", apiLead.APITest)
+		s.GET("/updateDB", apiLead.UpdateDB)
 
 		go func() {
 			s.Logger.Debug(s.Start(":" + s.Port))
