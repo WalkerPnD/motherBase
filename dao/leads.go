@@ -99,10 +99,14 @@ func newChildLeads(bs []byte) []*model.Irregular {
 func isNew(target *model.Irregular) bool {
 	rows := 0
 	n := &model.Lead{}
-	n.Email = target.Email
-	Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
-	if rows != 0 {
-		return false
+
+	if target.Email != "" {
+		n.Email = target.Email
+		Conn.Model(&model.Lead{}).Where(&n).Count(&rows)
+		if rows != 0 {
+			return false
+		}
+
 	}
 
 	n = &model.Lead{
